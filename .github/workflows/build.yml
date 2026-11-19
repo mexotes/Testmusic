@@ -1,0 +1,42 @@
+name: Build APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code lena
+        uses: actions/checkout@v4
+
+      - name: Java 17 setup
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle setup
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      # GitHub ki machine par Android SDK pehle se installed hota hai,
+      # lekin sdkmanager seedha naam se nahi milta - pura path use karna padta hai.
+      - name: SDK packages install
+        run: |
+          SDKMANAGER="$(command -v sdkmanager || echo "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager")"
+          echo "sdkmanager path: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: APK build
+        run: gradle assembleDebug --stacktrace
+
+      - name: APK download ke liye ready
+        uses: actions/upload-artifact@v4
+        with:
+          name: MexoMusic-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+          
