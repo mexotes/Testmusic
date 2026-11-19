@@ -1,0 +1,37 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.mexo.music'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.mexo.music'
+        minSdk 24
+        targetSdk 34
+        versionCode 3
+        versionName '3.0'
+        /* Extractor + Rhino + OkHttp milake method count zyada hota hai */
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    /* v3: YouTube stream link app ke andar nikaalne ke liye.
+       NewPipeExtractor (JitPack) - maintained library, nsig/signature
+       decipher ke liye Rhino JS engine iske saath khud aata hai.
+       OkHttp usi ke Downloader ke liye chahiye. */
+    implementation 'com.github.TeamNewPipe:NewPipeExtractor:v0.27.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+}
